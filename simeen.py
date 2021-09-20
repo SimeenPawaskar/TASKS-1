@@ -1,0 +1,159 @@
+ # DATA SCIENCE AND BUSINESS ANALYTICS INTERN AT SPARKS FOUNDATION
+ 
+# **Tasks:Prediction using Supervise ML**
+
+# **Done By:Simeen Asif Pawaskar**
+
+ # **Problem Statement:What will be predicted score, if a student studies for 9.25 hrs/day?**
+ 
+ 
+
+# In[17]:
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+
+# In[18]:
+
+
+Data=pd.read_csv('http://bit.ly/w-data')
+Data.head()
+
+
+# In[20]:
+
+
+Data.info()
+
+
+# In[21]:
+
+
+Data.describe()
+
+
+# In[23]:
+
+
+Data.shape
+
+
+# **Checking the relationship between the variables** 
+
+# In[24]:
+
+
+plt.scatter(Data['Hours'],Data['Scores'])
+plt.xlabel("Numbers of Hours")
+plt.ylabel("Scores")
+plt.title("Hours Vs Scores")
+plt.show()
+
+
+# we can clearly see that, there is a positive relation between no.of hours studies and scores of the student.
+
+# In[25]:
+
+
+#Splitting dataset into training and test dataset:
+from sklearn.model_selection import train_test_split
+
+
+# In[27]:
+
+
+x=Data.drop('Scores',axis=1)
+y=Data['Scores']
+x_train, x_test, y_train, y_test = train_test_split(x,y,random_state=6,train_size=.80)
+print(x_train.shape)
+print(x_test.shape)
+print(y_train.shape)
+print(y_test.shape)
+
+
+# In[29]:
+
+
+#Fitting the data:
+from sklearn.linear_model import LinearRegression
+
+
+# In[32]:
+
+
+Model=LinearRegression()
+Model.fit(x_train,y_train)
+
+
+# In[33]:
+
+
+lr_coeff=np.round(Model.coef_[0],2)
+print(lr_coeff)
+intercept=np.round(Model.intercept_,2)
+print(intercept)
+line=print('Scores=',lr_coeff, '*Hours +',intercept)
+
+
+# **PLOTTING REGRESSION LINE**
+
+# In[35]:
+
+
+plt.plot(x,y, 'o')
+plt.plot(x, Model.coef_*x + Model.intercept_)
+
+
+# In[36]:
+
+
+#predciting scores on test data:
+pred=Model.predict(x_test)
+pred
+
+
+# **COMPARING ACTUAL VS PREDICTED SCORES**
+
+# In[37]:
+
+
+Compare= pd.DataFrame({'Actual Score': y_test, 'Predicted Scores': pred})
+Compare
+
+
+# **EVALUTING THE MODEL**
+
+# In[38]:
+
+
+from sklearn import metrics
+
+
+# In[40]:
+
+
+print("Mean Absolute Error: ", metrics.mean_absolute_error(y_test, pred))
+print("Mean Squared Error: ", metrics.mean_squared_error(y_test, pred))
+print("Root Mean Squared Error: ", metrics.mean_squared_error(y_test, pred)**0.5)
+print("R2 Score: ", metrics.r2_score(y_test, pred))
+
+
+# **What will be predicted score if a student study for 9.25 hrs in a day?**
+
+# In[44]:
+
+
+hours=9.25
+PRED=Model.predict([[hours]])[0]
+print('The predicted score if a student studies for', f'[hours] hrs/day is',round(PRED,2),'')
+
+
+
+
+
+
+
